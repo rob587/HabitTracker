@@ -88,3 +88,23 @@ export async function saveCheck(check: Check): Promise<void> {
     console.error("Errore nel salvare il check", error);
   }
 }
+
+export async function getCheckByHabit(habitId: string): Promise<Check[]> {
+  try {
+    const allChecks = await getChecks();
+    return allChecks.filter((check) => check.habitId === habitId);
+  } catch (error) {
+    console.error("Errore nel recuperare i check per Abitudine", error);
+    return [];
+  }
+}
+
+export async function getChecksByDate(date: string): Promise<Check[]> {
+  try {
+    const allChecks = await getChecks();
+    return allChecks.filter((check) => check.date === date);
+  } catch (error) {
+    console.error("Errore nel recuperare i check per data:", error);
+    return [];
+  }
+}
