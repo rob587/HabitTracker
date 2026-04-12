@@ -1,12 +1,14 @@
 export type Habit = {
-  id: number;
+  id: string;
   name: string;
   createdAt: string;
-  reminder?: number;
+  color: string;
+  icon: string;
+  reminder?: string;
 };
 
 export type Check = {
-  habitId: number;
-  date: number;
+  habitId: string;
+  date: string;
   completed: boolean;
 };
