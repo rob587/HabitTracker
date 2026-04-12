@@ -108,3 +108,36 @@ export async function getChecksByDate(date: string): Promise<Check[]> {
     return [];
   }
 }
+
+export async function toggleCheck(
+  habitId: string,
+  date: string,
+): Promise<void> {
+  try {
+    const allChecks = await getChecks();
+
+    const checkExists = allChecks.some(
+      (check) => check.habitId === habitId && check.date === date,
+    );
+
+    let updatedChecks: Check[];
+
+    // rimozione del check se già esiste
+    if (checkExists) {
+      updatedChecks = allChecks.filter(
+        (check) => !(check.habitId === habitId && check.date === date),
+      );
+    } else {
+      // sennò aggiunge il check che non esiste
+      const newCheck: Check = {
+        habitId: habitId,
+        date: date,
+        completed: true,
+      };
+      updatedChecks = [...allChecks, newCheck];
+    }
+    await AsyncStorage.setItem(CHECKS_KEY, JSON.stringify(updatedChecks));
+  } catch (error) {
+    console.error("errore nel toggle del check", error);
+  }
+}
