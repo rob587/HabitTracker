@@ -78,3 +78,13 @@ export async function getChecks(): Promise<Check[]> {
     return [];
   }
 }
+
+export async function saveCheck(check: Check): Promise<void> {
+  try {
+    const existingChecks = await getChecks();
+    const updatedChecks = [...existingChecks, check];
+    await AsyncStorage.setItem(CHECKS_KEY, JSON.stringify(updatedChecks));
+  } catch (error) {
+    console.error("Errore nel salvare il check", error);
+  }
+}
