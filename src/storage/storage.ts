@@ -50,3 +50,13 @@ export async function updateHabit(
     console.error("Errore nell'aggiornare l'abitudine", error);
   }
 }
+
+export async function deleteHabit(id: string): Promise<void> {
+  try {
+    const existingHabits = await getHabits();
+    const updatedHabits = existingHabits.filter((habit) => habit.id !== id);
+    await AsyncStorage.setItem(HABITS_KEY, JSON.stringify(updatedHabits));
+  } catch (error) {
+    console.error("Errore nel cancellare l'abitudine", error);
+  }
+}
