@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Habit } from "../types";
+import { Check, Habit } from "../types";
 
 const HABITS_KEY = "@habits";
+const CHECKS_KEY = "@checks";
 
 // TUTTE LE FUNZIONALITà DI HABITS
 export async function getHabits(): Promise<Habit[]> {
@@ -58,5 +59,22 @@ export async function deleteHabit(id: string): Promise<void> {
     await AsyncStorage.setItem(HABITS_KEY, JSON.stringify(updatedHabits));
   } catch (error) {
     console.error("Errore nel cancellare l'abitudine", error);
+  }
+}
+
+// TUTTE LE FUNZIONI PER CHECK
+
+export async function getChecks(): Promise<Check[]> {
+  try {
+    const data = await AsyncStorage.getItem(CHECKS_KEY);
+
+    if (data === null) {
+      return [];
+    }
+
+    return JSON.parse(data) as Check[];
+  } catch (error) {
+    console.error("Errore nel recuperare i check", error);
+    return [];
   }
 }
