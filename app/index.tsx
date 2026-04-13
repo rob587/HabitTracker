@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Alert } from "react-native";
 import { useState } from "react";
 import { Habit } from "@/src/types";
-import { getHabits } from "@/src/storage/storage";
+import { deleteHabit, getHabits } from "@/src/storage/storage";
 
 export default function HomeScreen() {
 
@@ -21,6 +21,24 @@ export default function HomeScreen() {
     } finally{
       setLoading(false)
     }
+  }
+
+  const handleDelete = (id: string) => {
+    Alert.alert(
+      'Elimina Abitudine',
+      'Sei sicuro di voler eliminare questa abitudine?',
+      [
+        {text: 'Annulla', style: 'cancel'},
+        {
+          text: 'Elimina',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteHabit(id)
+            await loadHabits()
+          }
+        }
+      ]
+    )
   }
 
 
