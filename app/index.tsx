@@ -102,7 +102,7 @@ export default function HomeScreen() {
         <Text style={styles.icon}>{item.icon}</Text>
         <View style={styles.cardText}>
           <Text style={styles.habitName}>{item.name}</Text>
-          <Text style={styles.streak}>🔥 0 {streaks[item.id] || 0}giorni</Text>
+          <Text style={styles.streak}>🔥 {streaks[item.id] || 0} giorni</Text>
         </View>
       </View>
 

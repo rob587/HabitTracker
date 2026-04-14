@@ -108,7 +108,7 @@ export default function NewHabitScreen() {
           <TouchableOpacity
             key={color}
             onPress={() => {
-              setSelectedColor;
+              setSelectedColor(color);
             }}
             style={[
               styles.colorCircle,
@@ -137,23 +137,26 @@ export default function NewHabitScreen() {
         ))}
       </View>
 
-      <Text>Promemoria (opzionale)</Text>
+      <Text style={styles.label}>Promemoria (opzionale)</Text>
       <TextInput
+        style={styles.input}
         placeholder="HH:MM (es. 09:00)"
         placeholderTextColor="#666"
         value={reminder}
         onChangeText={setReminder}
       />
-      <Text>Inserisci l'orario in formato 24h. Es: 09:00 o 18:30</Text>
+      <Text style={styles.hint}>
+        Inserisci l'orario in formato 24h. Es: 09:00 o 18:30
+      </Text>
 
       {/* Pulsanti annulla-salva */}
 
-      <View>
-        <TouchableOpacity onPress={handleCancel}>
-          <Text> Annulla</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+          <Text style={styles.cancelButtonText}> Annulla</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleSave}>
-          <Text>Salva</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Salva</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
