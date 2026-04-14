@@ -88,47 +88,178 @@ export default function NewHabitScreen() {
     router.back();
   };
 
-  <ScrollView>
-    <Text>Nome abitudine</Text>
-    <TextInput
-      placeholder="Es. Correre, Leggere, Meditare"
-      placeholderTextColor="#666"
-      value={name}
-      onChangeText={setName}
-      autoFocus
-    />
-
-    {/* selettore colore */}
-
-    <Text>Colore</Text>
-    <View>
-      {colors.map((color) => (
-        <TouchableOpacity
-          key={color}
-          onPress={() => {
-            setSelectedColor;
-          }}
-        />
-      ))}
-    </View>
-
-    {/* Selettore Icona */}
-
-    <Text>Icona</Text>
-    <View>
-      {icons.map((icon) => (
-        <TouchableOpacity key={icon} onPress={() => setSelectedIcon(icon)}>
-          <Text>{icon}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  </ScrollView>;
-
   return (
-    <View>
-      <Text>CIAO</Text>
-    </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.label}>Nome abitudine</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Es. Correre, Leggere, Meditare"
+        placeholderTextColor="#666"
+        value={name}
+        onChangeText={setName}
+        autoFocus
+      />
+
+      {/* selettore colore */}
+
+      <Text style={styles.label}>Colore</Text>
+      <View style={styles.colorContainer}>
+        {colors.map((color) => (
+          <TouchableOpacity
+            key={color}
+            onPress={() => {
+              setSelectedColor;
+            }}
+            style={[
+              styles.colorCircle,
+              { backgroundColor: color },
+              selectedColor === color && styles.colorSelected,
+            ]}
+          />
+        ))}
+      </View>
+
+      {/* Selettore Icona */}
+
+      <Text style={styles.label}>Icona</Text>
+      <View style={styles.iconContainer}>
+        {icons.map((icon) => (
+          <TouchableOpacity
+            key={icon}
+            style={[
+              styles.iconButton,
+              selectedIcon === icon && styles.iconSelected,
+            ]}
+            onPress={() => setSelectedIcon(icon)}
+          >
+            <Text style={styles.iconText}>{icon}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text>Promemoria (opzionale)</Text>
+      <TextInput
+        placeholder="HH:MM (es. 09:00)"
+        placeholderTextColor="#666"
+        value={reminder}
+        onChangeText={setReminder}
+      />
+      <Text>Inserisci l'orario in formato 24h. Es: 09:00 o 18:30</Text>
+
+      {/* Pulsanti annulla-salva */}
+
+      <View>
+        <TouchableOpacity onPress={handleCancel}>
+          <Text> Annulla</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleSave}>
+          <Text>Salva</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#121212",
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  label: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  input: {
+    backgroundColor: "#1E1E2E",
+    borderRadius: 12,
+    padding: 14,
+    color: "#FFFFFF",
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#2A2A3A",
+  },
+  colorContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginBottom: 8,
+  },
+  colorCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: "#2A2A3A",
+  },
+  colorSelected: {
+    borderColor: "#FFFFFF",
+    borderWidth: 3,
+    transform: [{ scale: 1.05 }],
+  },
+  iconContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginBottom: 8,
+  },
+  iconButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#1E1E2E",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#2A2A3A",
+  },
+  iconSelected: {
+    borderColor: "#6366F1",
+    borderWidth: 3,
+    backgroundColor: "#2A2A3A",
+  },
+  iconText: {
+    fontSize: 28,
+  },
+  hint: {
+    color: "#888",
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 32,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#2A2A3A",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  saveButton: {
+    flex: 1,
+    backgroundColor: "#6366F1",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
