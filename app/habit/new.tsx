@@ -1,5 +1,8 @@
+import { saveHabit } from "@/src/storage/storage";
+import { Habit } from "@/src/types";
+import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 
 export default function NewHabitScreen() {
   // state iniziali per il form
@@ -35,6 +38,42 @@ export default function NewHabitScreen() {
     "🎵",
     "🧹",
   ];
+
+  // funzione per generare id Univoci
+
+  const generateId = (): string => {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 6);
+    return `habit_${timestamp}_${random}`;
+  };
+
+  // funzione per salvare ID
+
+  const handleSave = async () => {
+    if (name.trim() === "") {
+      Alert.alert("Errore", "Inserire il nome è obbligatorio");
+      return;
+    }
+
+    // preparazione del nuovo oggetto Abitudine
+
+    const newHabit: Habit = {
+      id: generateId(),
+      name: name.trim(),
+      createdAt: new Date().toISOString(),
+      color: selectedColor,
+      icon: selectedIcon,
+      reminder: reminder.trim() === "" ? undefined : reminder.trim(),
+    };
+
+    try {
+      await saveHabit(newHabit);
+      router.back();
+    } catch (error) {
+      Alert.alert("Errore', 'impossibile salvare l'abitudine");
+      console.error(error);
+    }
+  };
 
   return (
     <View>
