@@ -2,7 +2,15 @@ import { saveHabit } from "@/src/storage/storage";
 import { Habit } from "@/src/types";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function NewHabitScreen() {
   // state iniziali per il form
@@ -74,6 +82,47 @@ export default function NewHabitScreen() {
       console.error(error);
     }
   };
+
+  // funzione di cancellazione
+  const handleCancel = () => {
+    router.back();
+  };
+
+  <ScrollView>
+    <Text>Nome abitudine</Text>
+    <TextInput
+      placeholder="Es. Correre, Leggere, Meditare"
+      placeholderTextColor="#666"
+      value={name}
+      onChangeText={setName}
+      autoFocus
+    />
+
+    {/* selettore colore */}
+
+    <Text>Colore</Text>
+    <View>
+      {colors.map((color) => (
+        <TouchableOpacity
+          key={color}
+          onPress={() => {
+            setSelectedColor;
+          }}
+        />
+      ))}
+    </View>
+
+    {/* Selettore Icona */}
+
+    <Text>Icona</Text>
+    <View>
+      {icons.map((icon) => (
+        <TouchableOpacity key={icon} onPress={() => setSelectedIcon(icon)}>
+          <Text>{icon}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </ScrollView>;
 
   return (
     <View>
