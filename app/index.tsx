@@ -20,6 +20,31 @@ export default function HomeScreen() {
 
   const calculateStreakFromChecks = (checks: Check[]): number => {
     if (checks.length === 0) return 0;
+
+    // prende la mezzanotte di oggi
+    const today = new Date();
+    today.getUTCHours();
+    const todayString = today.toISOString;
+
+    // Crea un set delle date che hanno un check
+
+    const checkDates = new Set(checks.map((c) => c.date));
+
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    // conta i giorni consecutivi da oggi
+    while (true) {
+      const dateString = currentDate.toISOString();
+      if (checkDates.has(dateString)) {
+        streak++;
+        currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
   };
 
   const loadHabits = async () => {
@@ -77,7 +102,7 @@ export default function HomeScreen() {
         <Text style={styles.icon}>{item.icon}</Text>
         <View style={styles.cardText}>
           <Text style={styles.habitName}>{item.name}</Text>
-          <Text style={styles.streak}>🔥 0 giorni</Text>
+          <Text style={styles.streak}>🔥 0 {streaks[item.id] || 0}giorni</Text>
         </View>
       </View>
 
