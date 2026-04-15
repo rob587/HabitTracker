@@ -1,8 +1,20 @@
+import { Habit } from "@/src/types";
 import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function HabitDetailScreen() {
   const { id } = useLocalSearchParams();
+
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [checkStates, setCheckStates] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+
+  const getTodayString = (): string => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    return today.toISOString();
+  };
 
   return (
     <View style={styles.container}>
