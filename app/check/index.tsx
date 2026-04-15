@@ -40,6 +40,14 @@ export default function HabitDetailScreen() {
     setLoading(false);
   };
 
+  // funzione toggle checkbox in UI
+  const toggleHabitCheck = (habitId: string) => {
+    setCheckStates((prev) => ({
+      ...prev,
+      [habitId]: !prev[habitId],
+    }));
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Dettaglio Abitudine</Text>
