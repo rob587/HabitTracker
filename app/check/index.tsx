@@ -1,6 +1,6 @@
-import { getChecksByDate, getHabits } from "@/src/storage/storage";
+import { getChecksByDate, getHabits, toggleCheck } from "@/src/storage/storage";
 import { Habit } from "@/src/types";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -46,6 +46,22 @@ export default function HabitDetailScreen() {
       ...prev,
       [habitId]: !prev[habitId],
     }));
+  };
+
+  const handleSave = async () => {
+    const todayString = getTodayString();
+
+    // per ogni abitudine
+
+    for (const habit of habits) {
+      const isChecked = checkStates[habit.id];
+      if (isChecked) {
+        await toggleCheck(habit.id, todayString);
+      } else {
+        await toggleCheck(habit.id, todayString);
+      }
+    }
+    router.back();
   };
 
   return (
