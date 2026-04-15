@@ -1,6 +1,7 @@
+import { getChecksByDate, getHabits } from "@/src/storage/storage";
 import { Habit } from "@/src/types";
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function HabitDetailScreen() {
@@ -14,6 +15,29 @@ export default function HabitDetailScreen() {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     return today.toISOString();
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // funzione per caricare i dati all'apertura
+
+  const loadData = async () => {
+    const allHabits = await getHabits();
+    const todayString = getTodayString();
+    const todayChecks = await getChecksByDate(todayString);
+
+    // crea oggetto, per ogni habit, è checkata?
+    const initialCheckStates: Record<string, boolean> = {};
+    for (const habit of allHabits) {
+      const isChecked = todayChecks.some((check) => check.habitId === habit.id);
+      initialCheckStates[habit.id] = isChecked;
+    }
+
+    setHabits(allHabits);
+    setCheckStates(initialCheckStates);
+    setLoading(false);
   };
 
   return (
