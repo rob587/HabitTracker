@@ -21,19 +21,17 @@ export default function HomeScreen() {
   const calculateStreakFromChecks = (checks: Check[]): number => {
     if (checks.length === 0) return 0;
 
-    // prende la mezzanotte di oggi
+    // Prende la mezzanotte di oggi
     const today = new Date();
-    today.getUTCHours();
-    const todayString = today.toISOString;
+    today.setUTCHours(0, 0, 0, 0);
 
     // Crea un set delle date che hanno un check
-
     const checkDates = new Set(checks.map((c) => c.date));
 
     let streak = 0;
     let currentDate = new Date(today);
 
-    // conta i giorni consecutivi da oggi
+    // Conta i giorni consecutivi da oggi
     while (true) {
       const dateString = currentDate.toISOString();
       if (checkDates.has(dateString)) {
@@ -50,18 +48,21 @@ export default function HomeScreen() {
   const loadHabits = async () => {
     try {
       setLoading(true);
+
       const habitsList = await getHabits();
+
       setHabits(habitsList);
 
       const streaksMap: Record<string, number> = {};
       for (const habit of habitsList) {
         const checks = await getCheckByHabit(habit.id);
+
         const streak = calculateStreakFromChecks(checks);
+
         streaksMap[habit.id] = streak;
       }
       setStreaks(streaksMap);
     } catch (error) {
-      console.error("Errore nel caricare le abitudini", error);
     } finally {
       setLoading(false);
     }

@@ -69,6 +69,7 @@ export default function HabitDetailScreen() {
     // Per ogni abitudine, applica lo stato UI
     for (const habit of habits) {
       const shouldBeChecked = checkStates[habit.id];
+
       const isCurrentlyChecked = await checkExists(habit.id, todayString);
 
       // Solo se lo stato UI è diverso dallo stato reale, fai il toggle
