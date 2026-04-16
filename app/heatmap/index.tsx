@@ -97,7 +97,15 @@ export default function HeatmapScreen() {
       date.setUTCDate(today.getUTCDate() - i);
       days.unshift(date.toISOString().split("T")[0]); // Mette in ordine crescente
     }
+    const firstDate = new Date(days[0]);
+    const firstDayOfWeek = firstDate.getUTCDay();
+    const offset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+
+    const emptyDays = Array(offset).fill(null);
+
+    const weekDays = ["L", "M", "M", "G", "V", "S", "D"];
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Heatmap</Text>
