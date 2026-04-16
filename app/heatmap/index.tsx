@@ -16,6 +16,8 @@ export default function HeatmapScreen() {
 
       setTotalHabits(habits.length);
 
+      // Crea una mappa: data -> numero di check completati
+
       const checkCountMap = new Map<string, number>();
 
       for (const check of checks) {
@@ -23,7 +25,7 @@ export default function HeatmapScreen() {
         const currentCount = checkCountMap.get(date) || 0;
         checkCountMap.set(date, currentCount + 1);
       }
-
+      // Calcola percentuali per ogni giorno degli ultimi 180 giorni
       const percentages = new Map<string, number>();
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
@@ -54,6 +56,25 @@ export default function HeatmapScreen() {
   useEffect(() => {
     loadHeatmap();
   }, []);
+
+  // colori in base alla percentuale
+  const getColorForPercentage = (percentage: number): string => {
+    if (percentage === 0) return "#2A2A3A";
+    if (percentage <= 25) return "rgba(16, 185, 129, 0.25)";
+    if (percentage <= 50) return "rgba(16, 185, 129, 0.50)";
+    if (percentage <= 75) return "rgba(16, 185, 129, 0.75)";
+    return "#10B981";
+  };
+
+  const formDate = (dateKey: string): string => {
+    const [year, month, day] = dateKey.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const getDayOfWeek = (dateKey: string): number => {
+    const date = new Date(dateKey);
+    return date.getUTCDay();
+  };
 
   return (
     <View style={styles.container}>
