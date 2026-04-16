@@ -1,6 +1,6 @@
 import { getChecks, getHabits } from "@/src/storage/storage";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function HeatmapScreen() {
   const [loading, setLoading] = useState(true);
@@ -104,7 +104,52 @@ export default function HeatmapScreen() {
     const emptyDays = Array(offset).fill(null);
 
     const weekDays = ["L", "M", "M", "G", "V", "S", "D"];
+
+    return (
+      <>
+        <View>
+          {weekDays.map((day, index) => (
+            <Text key={index}>{day}</Text>
+          ))}
+        </View>
+
+        <View>
+          {emptyDays.map((_, index) => (
+            <View key={`empty-${index}`}>
+              {days.map((dateKey) => {
+                const percentage = heatmapData.get(dateKey) || 0;
+                const color = getColorForPercentage(percentage);
+
+                return (
+                  <TouchableOpacity
+                    key={dateKey}
+                    onPress={() => handleDayPress(dateKey, percentage)}
+                  />
+                );
+              })}
+            </View>
+          ))}
+        </View>
+      </>
+    );
   };
+
+  if (loading) {
+    return (
+      <View>
+        <Text>Caricamento heatmap...</Text>
+      </View>
+    );
+  }
+
+  if (totalHabits === 0) {
+    return (
+      <View>
+        <Text>Nessuna abitudine ancora</Text>
+        <Text>Aggiungi un'abitudine per vedere la heatmap</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
