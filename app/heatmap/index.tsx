@@ -66,7 +66,7 @@ export default function HeatmapScreen() {
     return "#10B981";
   };
 
-  const formDate = (dateKey: string): string => {
+  const formatDate = (dateKey: string): string => {
     const [year, month, day] = dateKey.split("-");
     return `${day}/${month}/${year}`;
   };
@@ -76,6 +76,28 @@ export default function HeatmapScreen() {
     return date.getUTCDay();
   };
 
+  const handleDayPress = (dateKey: string, percentage: number) => {
+    const completedCount =
+      totalHabits > 0 ? Math.round((percentage / 100) * totalHabits) : 0;
+    Alert.alert(
+      formatDate(dateKey),
+      `Abitudini completate: ${completedCount} / ${totalHabits}\nPercentuale: ${Math.round(percentage)}%`,
+      [{ text: "OK" }],
+    );
+  };
+
+  const generateGrid = () => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // Genera array degli ultimi 180 giorni
+    const days: string[] = [];
+    for (let i = 0; i < 180; i++) {
+      const date = new Date(today);
+      date.setUTCDate(today.getUTCDate() - i);
+      days.unshift(date.toISOString().split("T")[0]); // Mette in ordine crescente
+    }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Heatmap</Text>
