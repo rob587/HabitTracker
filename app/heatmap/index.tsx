@@ -108,11 +108,12 @@ export default function HeatmapScreen() {
     return (
       <>
         <View>
+          {/* intestazioni */}
           {weekDays.map((day, index) => (
             <Text key={index}>{day}</Text>
           ))}
         </View>
-
+        {/* griglia giorni */}
         <View>
           {emptyDays.map((_, index) => (
             <View key={`empty-${index}`}>
@@ -154,6 +155,9 @@ export default function HeatmapScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Heatmap</Text>
+      <Text>Progressi degli ultimi 6 mesi</Text>
+
+      {generateGrid()}
     </View>
   );
 }
