@@ -1,6 +1,6 @@
 import { getChecks, getHabits } from "@/src/storage/storage";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -19,23 +19,24 @@ export default function HeatmapScreen() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const loadHeatmap = async () => {
+    console.log("🔄 loadHeatmap chiamata");
     try {
       setLoading(true);
       const habits = await getHabits();
       const checks = await getChecks();
 
+      console.log("📊 Abitudini trovate:", habits.length);
+      console.log("📊 Check trovati:", checks.length);
+
       setTotalHabits(habits.length);
 
-      // Crea una mappa: data -> numero di check completati
       const checkCountMap = new Map<string, number>();
-
       for (const check of checks) {
         const date = check.date.split("T")[0];
         const currentCount = checkCountMap.get(date) || 0;
         checkCountMap.set(date, currentCount + 1);
       }
 
-      // Calcola percentuali per ogni giorno degli ultimi 180 giorni
       const percentages = new Map<string, number>();
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
@@ -45,9 +46,9 @@ export default function HeatmapScreen() {
         date.setUTCDate(today.getUTCDate() - i);
         const dateKey = date.toISOString().split("T")[0];
 
-        if (totalHabits > 0) {
+        if (habits.length > 0) {
           const completedCount = checkCountMap.get(dateKey) || 0;
-          const percentage = (completedCount / totalHabits) * 100;
+          const percentage = (completedCount / habits.length) * 100;
           percentages.set(dateKey, percentage);
         } else {
           percentages.set(dateKey, 0);
@@ -55,6 +56,7 @@ export default function HeatmapScreen() {
       }
 
       setHeatmapData(percentages);
+      setRefreshKey((prev) => prev + 1);
     } catch (error) {
       console.error("Errore nel caricare la heatmap:", error);
       Alert.alert("Errore", "Non è stato possibile caricare la heatmap");
@@ -63,10 +65,13 @@ export default function HeatmapScreen() {
     }
   };
 
+  useEffect(() => {
+    loadHeatmap();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       loadHeatmap();
-      setRefreshKey((prev) => prev + 1);
     }, []),
   );
 
