@@ -1,6 +1,13 @@
 import { getChecks, getHabits } from "@/src/storage/storage";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function HeatmapScreen() {
   const [loading, setLoading] = useState(true);
@@ -153,24 +160,149 @@ export default function HeatmapScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Heatmap</Text>
-      <Text>Progressi degli ultimi 6 mesi</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>Heatmap</Text>
+      <Text style={styles.subtitle}>Progressi degli ultimi 6 mesi</Text>
 
       {generateGrid()}
-    </View>
+
+      {/* Legenda */}
+      <View style={styles.legend}>
+        <Text style={styles.legendTitle}>Legenda</Text>
+        <View style={styles.legendRow}>
+          <View style={[styles.legendColor, { backgroundColor: "#2A2A3A" }]} />
+          <Text style={styles.legendText}>0%</Text>
+
+          <View
+            style={[
+              styles.legendColor,
+              { backgroundColor: "rgba(16, 185, 129, 0.25)" },
+            ]}
+          />
+          <Text style={styles.legendText}>1-25%</Text>
+
+          <View
+            style={[
+              styles.legendColor,
+              { backgroundColor: "rgba(16, 185, 129, 0.50)" },
+            ]}
+          />
+          <Text style={styles.legendText}>26-50%</Text>
+        </View>
+        <View style={styles.legendRow}>
+          <View
+            style={[
+              styles.legendColor,
+              { backgroundColor: "rgba(16, 185, 129, 0.75)" },
+            ]}
+          />
+          <Text style={styles.legendText}>51-75%</Text>
+
+          <View style={[styles.legendColor, { backgroundColor: "#10B981" }]} />
+          <Text style={styles.legendText}>76-100%</Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#121212",
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  center: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#121212",
   },
-  text: {
-    color: "#ffffff",
-    fontSize: 20,
+  loadingText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  emptyText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "500",
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    color: "#A1A1AA",
+    fontSize: 14,
+  },
+  title: {
+    color: "#FFFFFF",
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  subtitle: {
+    color: "#A1A1AA",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  weekHeader: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
+  weekdayHeader: {
+    color: "#A1A1AA",
+    fontSize: 12,
+    width: 32,
+    textAlign: "center",
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+  },
+  dayCell: {
+    width: 32,
+    height: 32,
+    margin: 2,
+    borderRadius: 6,
+  },
+  emptyCell: {
+    width: 32,
+    height: 32,
+    margin: 2,
+  },
+  legend: {
+    marginTop: 32,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#2A2A3A",
+  },
+  legendTitle: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  legendRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    flexWrap: "wrap",
+  },
+  legendColor: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  legendText: {
+    color: "#A1A1AA",
+    fontSize: 12,
+    marginRight: 16,
   },
 });
