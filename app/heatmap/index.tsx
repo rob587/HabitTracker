@@ -1,5 +1,6 @@
 import { getChecks, getHabits } from "@/src/storage/storage";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -15,16 +16,17 @@ export default function HeatmapScreen() {
     new Map(),
   );
   const [totalHabits, setTotalHabits] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const loadHeatmap = async () => {
     try {
+      setLoading(true);
       const habits = await getHabits();
       const checks = await getChecks();
 
       setTotalHabits(habits.length);
 
       // Crea una mappa: data -> numero di check completati
-
       const checkCountMap = new Map<string, number>();
 
       for (const check of checks) {
@@ -32,12 +34,13 @@ export default function HeatmapScreen() {
         const currentCount = checkCountMap.get(date) || 0;
         checkCountMap.set(date, currentCount + 1);
       }
+
       // Calcola percentuali per ogni giorno degli ultimi 180 giorni
       const percentages = new Map<string, number>();
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
 
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 180; i++) {
         const date = new Date(today);
         date.setUTCDate(today.getUTCDate() - i);
         const dateKey = date.toISOString().split("T")[0];
@@ -60,11 +63,14 @@ export default function HeatmapScreen() {
     }
   };
 
-  useEffect(() => {
-    loadHeatmap();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadHeatmap();
+      setRefreshKey((prev) => prev + 1);
+    }, []),
+  );
 
-  // colori in base alla percentuale
+  // Colori in base alla percentuale
   const getColorForPercentage = (percentage: number): string => {
     if (percentage === 0) return "#2A2A3A";
     if (percentage <= 25) return "rgba(16, 185, 129, 0.25)";
@@ -76,11 +82,6 @@ export default function HeatmapScreen() {
   const formatDate = (dateKey: string): string => {
     const [year, month, day] = dateKey.split("-");
     return `${day}/${month}/${year}`;
-  };
-
-  const getDayOfWeek = (dateKey: string): number => {
-    const date = new Date(dateKey);
-    return date.getUTCDay();
   };
 
   const handleDayPress = (dateKey: string, percentage: number) => {
@@ -102,41 +103,44 @@ export default function HeatmapScreen() {
     for (let i = 0; i < 180; i++) {
       const date = new Date(today);
       date.setUTCDate(today.getUTCDate() - i);
-      days.unshift(date.toISOString().split("T")[0]); // Mette in ordine crescente
+      days.unshift(date.toISOString().split("T")[0]);
     }
+
     const firstDate = new Date(days[0]);
     const firstDayOfWeek = firstDate.getUTCDay();
     const offset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-
     const emptyDays = Array(offset).fill(null);
-
     const weekDays = ["L", "M", "M", "G", "V", "S", "D"];
 
     return (
       <>
-        <View>
-          {/* intestazioni */}
+        {/* Intestazioni */}
+        <View style={styles.weekHeader}>
           {weekDays.map((day, index) => (
-            <Text key={index}>{day}</Text>
+            <Text key={index} style={styles.weekdayHeader}>
+              {day}
+            </Text>
           ))}
         </View>
-        {/* griglia giorni */}
-        <View>
-          {emptyDays.map((_, index) => (
-            <View key={`empty-${index}`}>
-              {days.map((dateKey) => {
-                const percentage = heatmapData.get(dateKey) || 0;
-                const color = getColorForPercentage(percentage);
 
-                return (
-                  <TouchableOpacity
-                    key={dateKey}
-                    onPress={() => handleDayPress(dateKey, percentage)}
-                  />
-                );
-              })}
-            </View>
+        {/* Griglia giorni */}
+        <View style={styles.grid}>
+          {emptyDays.map((_, index) => (
+            <View key={`empty-${index}`} style={styles.emptyCell} />
           ))}
+
+          {days.map((dateKey) => {
+            const percentage = heatmapData.get(dateKey) || 0;
+            const color = getColorForPercentage(percentage);
+
+            return (
+              <TouchableOpacity
+                key={dateKey}
+                style={[styles.dayCell, { backgroundColor: color }]}
+                onPress={() => handleDayPress(dateKey, percentage)}
+              />
+            );
+          })}
         </View>
       </>
     );
@@ -144,17 +148,19 @@ export default function HeatmapScreen() {
 
   if (loading) {
     return (
-      <View>
-        <Text>Caricamento heatmap...</Text>
+      <View style={styles.center}>
+        <Text style={styles.loadingText}>Caricamento heatmap...</Text>
       </View>
     );
   }
 
   if (totalHabits === 0) {
     return (
-      <View>
-        <Text>Nessuna abitudine ancora</Text>
-        <Text>Aggiungi un'abitudine per vedere la heatmap</Text>
+      <View style={styles.center}>
+        <Text style={styles.emptyText}>Nessuna abitudine ancora</Text>
+        <Text style={styles.emptySubtext}>
+          Aggiungi un'abitudine per vedere la heatmap
+        </Text>
       </View>
     );
   }
@@ -164,7 +170,26 @@ export default function HeatmapScreen() {
       <Text style={styles.title}>Heatmap</Text>
       <Text style={styles.subtitle}>Progressi degli ultimi 6 mesi</Text>
 
-      {generateGrid()}
+      <View
+        style={{
+          backgroundColor: "#1E1E2E",
+          padding: 16,
+          marginBottom: 16,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: "#FFFFFF", marginBottom: 8 }}>📊 DATI TEST:</Text>
+        <Text style={{ color: "#A1A1AA" }}>Total Habits: {totalHabits}</Text>
+        <Text style={{ color: "#A1A1AA" }}>
+          Heatmap Data Size: {heatmapData.size}
+        </Text>
+        <Text style={{ color: "#A1A1AA" }}>Refresh Key: {refreshKey}</Text>
+        <Text style={{ color: "#10B981", marginTop: 8 }}>
+          ✅ Oggi: {new Date().toISOString().split("T")[0]}
+        </Text>
+      </View>
+
+      <View key={refreshKey}>{generateGrid()}</View>
 
       {/* Legenda */}
       <View style={styles.legend}>
@@ -270,6 +295,8 @@ const styles = StyleSheet.create({
     height: 32,
     margin: 2,
     borderRadius: 6,
+    borderWidth: 0.5,
+    borderColor: "#2A2A3A",
   },
   emptyCell: {
     width: 32,
