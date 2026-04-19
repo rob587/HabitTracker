@@ -1,7 +1,8 @@
+import { getHabits } from "@/src/storage/storage";
 import { Habit } from "@/src/types";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 
 const HeatMapScreen = () => {
   const { id } = useLocalSearchParams();
@@ -49,6 +50,33 @@ const HeatMapScreen = () => {
     "🎵",
     "🧹",
   ];
+
+  // carica i dati dell'abitudine
+
+  const loadHabitData = async () => {
+    try {
+      setLoading(true);
+      const habits = await getHabits();
+      const foundHabit = habits.find((h) => h.id === habitId);
+
+      if (!foundHabit) {
+        Alert.alert("Errore", "Abitudine non trovata");
+        router.back();
+        return;
+      }
+
+      setHabit(foundHabit);
+      setEditName(foundHabit.name);
+      setEditColor(foundHabit.color);
+      setEditIcon(foundHabit.icon);
+      setEditReminder(foundHabit.reminder || "");
+    } catch (error) {
+      console.error("Errore nel caricare i dettagli:", error);
+      Alert.alert("Errore", "Non è stato possibile caricare i dettagli");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View>
